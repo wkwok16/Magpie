@@ -1,3 +1,4 @@
+import java.util.Random;
 public class Magpie
 {
   public String getGreeting() //Gives a default greeting
@@ -58,6 +59,11 @@ public class Magpie
       response = transformIWantStatement(statement);
     }
     
+    else if(findKeyword(statement, "is", 0) >= 0) // Finds "is"
+    {
+      response = transformIsStatement(statement);
+    }
+    
     else
     { // Look for a two word (you <something> me) pattern
       int psn = findKeyword(statement, "you", 0);
@@ -116,10 +122,24 @@ public class Magpie
     {
       statement = statement.substring(0, statement.length() - 1);
     }
-    int psnOfYou = findKeyword (statement, "you", 0);
-    int psnOfMe = findKeyword (statement, "me", psnOfYou + 3);
+    int psnOfYou = findKeyword (statement, "you", 0); // Finds "you"
+    int psnOfMe = findKeyword (statement, "me", psnOfYou + 3); // finds "me" after "you"
     String restOfStatement = statement.substring(psnOfYou + 3, psnOfMe).trim();
     return "What makes you think that I " + restOfStatement + " you?";
+  }
+  
+  private String transformIsStatement(String statement) // Transforms statement with "is"  in it to a question asking why
+  {
+    statement = statement.trim();
+    String lastChar = statement.substring(statement.length() - 1);
+    if (lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement.length() - 1);
+    }
+    int psn = findKeyword(statement, "is", 0); // Finds "is"
+    String restOfStatement = statement.substring(psn+2); // Determines the rest of the statement
+    String beginningOfStatement = statement.substring(0, psn-1); // Determins what was said before the "is"
+    return "Why is " + beginningOfStatement + restOfStatement + "?"; // Returns question
   }
   
   private int findKeyword(String statement, String goal, int startPos)
@@ -151,37 +171,19 @@ public class Magpie
     return findKeyword(statement, goal, 0);
   }
   
-  private String getRandomResponse()
+  private String getRandomResponse ()
   {
-    final int NUMBER_OF_RESPONSES = 6;
-    double r = Math.random();
-    int whichResponse = (int)(r * NUMBER_OF_RESPONSES);
-    String response = "";
-    
-    if (whichResponse == 0)
-    {
-      response = "Interesting, tell me more.";
-    }
-    else if (whichResponse == 1)
-    {
-      response = "Hmmm.";
-    }
-    else if (whichResponse == 2)
-    {
-      response = "Do you really think so?";
-    }
-    else if (whichResponse == 3)
-    {
-      response = "You don't say.";
-    }
-    else if(whichResponse == 4)
-    {
-      response = "Wow, that sounds great!";
-    }
-    else if(whichResponse == 4)
-    {
-      response = "No way!";
-    }
-    return response;
+    Random r = new Random ();
+    return randomResponses [r.nextInt(randomResponses.length)];
   }
+  
+  private String [] randomResponses = {"Interesting, tell me more",
+    "Hmmm.",
+    "Do you really think so?",
+    "You don't say.",
+    "Sounds great.",
+    "Ah, I see.",
+    "Good for you.",
+    "Of course."
+  };
 }
