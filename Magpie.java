@@ -181,7 +181,7 @@ public class Magpie
     "Hmmm.",
     "Do you really think so?",
     "You don't say.",
-    "Sounds great.",
+    "Sounds great.", // 4 new statements
     "Ah, I see.",
     "Good for you.",
     "Of course."
