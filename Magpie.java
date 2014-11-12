@@ -5,30 +5,26 @@ public class Magpie
   {
     return "Hello, let's talk.";
   }
+  
   public String getResponse(String statementIn) // Gives return statement to user input
   {
     String response = "";
     String statement = statementIn.toLowerCase(); // Makes string to lower case
+    
+    //Regular responses
     if (findKeyword(statement, "no") >= 0) //Changed statement.indexOf("") to findKeyword(statement, "")
     {
       response = "Why so negative?";
     }
-    else if (findKeyword(statement, "mother") >= 0 
-               || findKeyword(statement, "father") >= 0 
-               || findKeyword(statement, "sister") >= 0 
-               || findKeyword(statement, "brother") >= 0)
+    else if (findKeyword(statement, "mother") >= 0 || findKeyword(statement, "father") >= 0 || findKeyword(statement, "sister") >= 0 || findKeyword(statement, "brother") >= 0)
     {
       response = "Tell me more about your family.";
     }
-    else if(findKeyword(statement, "cat") >= 0
-              || findKeyword(statement, "dog") >= 0
-              || findKeyword(statement, "pet") >= 0
-              || findKeyword(statement, "fish") >= 0)
+    else if(findKeyword(statement, "cat") >= 0 || findKeyword(statement, "dog") >= 0 || findKeyword(statement, "pet") >= 0 || findKeyword(statement, "fish") >= 0)
     {
       response = "Tell me more about your pets.";
     }
-    else if(findKeyword(statement, "kiang") >= 0
-              || findKeyword(statement, "landgraf") >= 0)
+    else if(findKeyword(statement, "kiang") >= 0 || findKeyword(statement, "landgraf") >= 0)
     {
       response = "I've heard about that guy! He's a pretty smart and swell person!";
     }
@@ -36,24 +32,19 @@ public class Magpie
     {
       response = "Say somthing, please";
     }
-    else if(findKeyword(statement, "hungry") >= 0
-              || findKeyword(statement, "food") >= 0)
+    else if(findKeyword(statement, "hungry") >= 0 || findKeyword(statement, "food") >= 0)
     {
       response = "What foods do you enjoy?";
     }
-    else if(findKeyword(statement, "school") >= 0
-              || findKeyword(statement, "grades") >= 0
-              || findKeyword(statement, "gpa") >= 0)
+    else if(findKeyword(statement, "school") >= 0 || findKeyword(statement, "grades") >= 0 || findKeyword(statement, "gpa") >= 0)
     {
       response = "Sounds difficult. It'll all be worth it in the end, though!";
     }
-    else if(findKeyword(statement, "video games") >= 0
-              || findKeyword(statement, "games") >= 0
-              || findKeyword(statement, "controller") >= 0)
+    else if(findKeyword(statement, "video games") >= 0 || findKeyword(statement, "games") >= 0 || findKeyword(statement, "controller") >= 0)
     {
       response = "I enjoy playing lots of video games! I enjoy playing Osu! in particular!";
     }         
-    //////////////////////////////
+    // Transform statements
     else if (findKeyword(statement, "I want", 0) >= 0)
     {
       response = transformIWantStatement(statement);
@@ -62,6 +53,11 @@ public class Magpie
     else if(findKeyword(statement, "is", 0) >= 0) // Finds "is"
     {
       response = transformIsStatement(statement);
+    }
+     
+    else if(findKeyword(statement, "are", 0) >= 0 && findKeyword(statement, "you", 0) < 0) // Finds "are" and makes sure that "you" is not in the statement
+    {
+      response = transformAreStatement(statement);
     }
     
     else
@@ -138,8 +134,22 @@ public class Magpie
     }
     int psn = findKeyword(statement, "is", 0); // Finds "is"
     String restOfStatement = statement.substring(psn+2); // Determines the rest of the statement
-    String beginningOfStatement = statement.substring(0, psn-1); // Determins what was said before the "is"
+    String beginningOfStatement = statement.substring(0, psn-1); // Determines what was said before the "is"
     return "Why is " + beginningOfStatement + restOfStatement + "?"; // Returns question
+  }
+  
+  private String transformAreStatement(String statement) // transforms statement with "are" in it to question asking why
+  {
+    statement = statement.trim();
+    String lastChar = statement.substring(statement.length() - 1);
+    if(lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement.length() - 1);
+    }
+    int psn = findKeyword(statement, "are", 0); // Finds "are"
+    String restOfStatement = statement.substring(psn+3); // Determines rest of statement
+    String beginningOfStatement = statement.substring(0, psn-1); // Determines what was said before the "are"
+    return "Why are " + beginningOfStatement + restOfStatement + "?"; // Returns question
   }
   
   private int findKeyword(String statement, String goal, int startPos)
