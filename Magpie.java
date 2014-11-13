@@ -10,7 +10,7 @@ public class Magpie
   {
     String response = "";
     String statement = statementIn.toLowerCase(); // Makes string to lower case
-    
+    statement = expandContraction(statement); // Expands contractions
     //Regular responses
     if (findKeyword(statement, "no") >= 0) //Changed statement.indexOf("") to findKeyword(statement, "")
     {
@@ -179,6 +179,159 @@ public class Magpie
   private int findKeyword(String statement, String goal)
   {
     return findKeyword(statement, goal, 0);
+  }
+  
+    //expands contractions
+  private String expandContraction(String statement)
+  {
+    String temp = statement;
+    
+    //expands can't <- exception
+    while (findKeyword(temp, "can't") >= 0) {
+      int psn = findKeyword(temp, "can't"); //the position of the contraction
+      String beginning = temp.substring(0,psn); //the piece before the contraction
+      String contraction = "can't"; //the contraction
+      String end = temp.substring(psn + 5); // the piece after the contraction
+      contraction = contraction.substring(0,contraction.length() - 2) + "not"; //expands the contraction
+      temp = beginning + contraction + end; //pieces together the new contraction
+    }
+    
+    //expands I'm <- exception
+    while (findKeyword(temp, "I'm") >= 0) {
+      int psn = findKeyword(temp, "I'm"); //the position of the contraction
+      String beginning = temp.substring(0,psn); //the piece before the contraction
+      String contraction = "I'm"; //the contraction
+      String end = temp.substring(psn + 3); // the piece after the contraction
+      contraction = contraction.substring(0,contraction.length() - 2) + " am"; //expands the contraction
+      temp = beginning + contraction + end; //pieces together the new contraction
+    }
+    
+    String [] nPattern = { // the words that follow the pattern <something>n't = <something> not
+      "aren't",
+      "couldn't",
+      "didn't",
+      "doesn't",
+      "don't",
+      "hadn't",
+      "hasn't",
+      "haven't",
+      "shouldn't",
+      "weren't",
+      "wouldn't",
+      "isn't",
+      "mustn't",
+      "mightn't"
+    };
+    
+    //expands all the contractions with the <something>n't pattern
+    for (int i = 0; i < nPattern.length; i++) {
+      while (findKeyword(temp, nPattern[i]) >= 0) { //while there are still contractions
+        int psn = findKeyword(temp, nPattern[i]); //the position of the contraction
+        String beginning = temp.substring(0,psn); //the piece before the contraction
+        String contraction = temp.substring(psn,psn + nPattern[i].length()); //the contraction
+        String end = temp.substring(psn + contraction.length()); // the piece after the contraction
+        contraction = contraction.substring(0,contraction.length() - 3) + " not"; //expands the contraction
+        temp = beginning + contraction + end; //pieces together the new contraction
+      }
+    }
+    
+    String [] rePattern = { // the words that follow the pattern <something>'re = <something> are
+      "you're",
+      "we're",
+      "they're"
+    };
+    
+    //expands all the contractions with the <something>'re pattern
+    for (int i = 0; i < rePattern.length; i++) {
+      while (findKeyword(temp, rePattern[i]) >= 0) { //while there are still contractions
+        int psn = findKeyword(temp, rePattern[i]); //the position of the contraction
+        String beginning = temp.substring(0,psn); //the piece before the contraction
+        String contraction = temp.substring(psn,psn + rePattern[i].length()); //the contraction
+        String end = temp.substring(psn + contraction.length()); // the piece after the contraction
+        contraction = contraction.substring(0,contraction.length() - 3) + " are"; //expands the contraction
+        temp = beginning + contraction + end; //pieces together the new contraction
+      }
+    }
+    
+    String [] sPattern = { // the words that follow the pattern <something>'s = <something> is
+      "he's",
+      "she's",
+      "it's",
+      "that's",
+      "who's",
+      "what's",
+      "when's",
+      "where's",
+      "why's",
+      "how's"
+    };
+    
+    //expands all the contractions with the <something>'s pattern
+    for (int i = 0; i < sPattern.length; i++) {
+      while (findKeyword(temp, sPattern[i]) >= 0) { //while there are still contractions
+        int psn = findKeyword(temp, sPattern[i]); //the position of the contraction
+        String beginning = temp.substring(0,psn); //the piece before the contraction
+        String contraction = temp.substring(psn,psn + sPattern[i].length()); //the contraction
+        String end = temp.substring(psn + contraction.length()); // the piece after the contraction
+        contraction = contraction.substring(0,contraction.length() - 2) + " is"; //expands the contraction
+        temp = beginning + contraction + end; //pieces together the new contraction
+      }
+    }
+    
+    String [] willPattern = { // the words that follow the pattern <something>'ll = <something> will
+      "I'll",
+      "you'll",
+      "he'll",
+      "she'll",
+      "it'll",
+      "we'll",
+      "they'll",
+      "that'll",
+      "who'll",
+      "what'll",
+      "when'll",
+      "where'll",
+      "why'll",
+      "how'll"
+    };
+    
+    //expands all the contractions with the <something>'ll pattern
+    for (int i = 0; i < willPattern.length; i++) {
+      while (findKeyword(temp, willPattern[i]) >= 0) { //while there are still contractions
+        int psn = findKeyword(temp, willPattern[i]); //the position of the contraction
+        String beginning = temp.substring(0,psn); //the piece before the contraction
+        String contraction = temp.substring(psn,psn + willPattern[i].length()); //the contraction
+        String end = temp.substring(psn + contraction.length()); // the piece after the contraction
+        contraction = contraction.substring(0,contraction.length() - 3) + " will"; //expands the contraction
+        temp = beginning + contraction + end; //pieces together the new contraction
+      }
+    }
+    
+    String [] vePattern = { // the words that follow the pattern <something>'ve = <something> have
+      "I've",
+      "you've",
+      "we've",
+      "they've",
+      "would've",
+      "should've",
+      "could've",
+      "might've",
+      "must've"
+    };
+    
+    //expands all the contractions with the <something>'ve pattern
+    for (int i = 0; i < vePattern.length; i++) {
+      while (findKeyword(temp, vePattern[i]) >= 0) { //while there are still contractions
+        int psn = findKeyword(temp, vePattern[i]); //the position of the contraction
+        String beginning = temp.substring(0,psn); //the piece before the contraction
+        String contraction = temp.substring(psn,psn + vePattern[i].length()); //the contraction
+        String end = temp.substring(psn + contraction.length()); // the piece after the contraction
+        contraction = contraction.substring(0,contraction.length() - 3) + " have"; //expands the contraction
+        temp = beginning + contraction + end; //pieces together the new contraction
+      }
+    }
+    
+    return temp;
   }
   
   private String getRandomResponse ()
