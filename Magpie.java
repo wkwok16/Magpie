@@ -26,8 +26,9 @@ public class Magpie
     // Transform statements
     else if (findKeyword(statement, "I want", 0) >= 0) response = transformIWantStatement(statement);
     else if(findKeyword(statement, "is", 0) >= 0)  response = transformIsStatement(statement); // Finds "is" 
-    else if(findKeyword(statement, "are", 0) >= 0 && findKeyword(statement, "you", 0) < 0) response = transformAreStatement(statement);  // Finds "are" and makes sure that "you" is not in the statement 
+    else if(findKeyword(statement, "are", 0) >= 0) response = transformAreStatement(statement);  // Finds "are"
     else if(findKeyword(statement, "was", 0) >= 0) response = transformWasStatement(statement); // Finds "was"
+    else if(findKeyword(statement, "had", 0) >= 0) response = transformHadStatement(statement); // Finds "had"
     else
     { // Look for a two word (you <something> me) pattern
       int psn = findKeyword(statement, "you", 0);
@@ -100,15 +101,21 @@ public class Magpie
   private String transformAreStatement(String statement) // transforms statement with "are" in it to question asking why
   {
     statement = statement.trim();
+    String nextword = "are";
     String lastChar = statement.substring(statement.length() - 1);
     if(lastChar.equals("."))
     {
       statement = statement.substring(0, statement.length() - 1);
     }
     int psn = findKeyword(statement, "are", 0); // Finds "are"
-    String restOfStatement = statement.substring(psn+3); // Determines rest of statement
     String beginningOfStatement = statement.substring(0, psn-1); // Determines what was said before the "are"
-    return "Why are " + beginningOfStatement + restOfStatement + "?"; // Returns question
+    String restOfStatement = statement.substring(psn+3); // Determines rest of statement
+    if(findKeyword(statement,"you",0) >= 0)
+    {
+      nextword = "am I";
+    }
+    else nextword = "are " + beginningOfStatement;
+    return "Why " + nextword + restOfStatement + "?"; // Returns question
   }
   
   private String transformWasStatement(String statement) // transform statement with "was" in it to question 
@@ -130,6 +137,20 @@ public class Magpie
     else if(findKeyword(statement,"that",0) >= 0) person = "was that";
     else person = "was " + beginningOfStatement; // In case the person gives other statement, it'll say that instead
     return "Why " + person + restOfStatement + "?";
+  }
+  
+  private String transformHadStatement(String statement) // transform statement with "had"
+  {
+    statement = statement.trim();
+    String lastChar = statement.substring(statement.length() - 1);
+    if(lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement.length() - 1);
+    }
+    int psn = findKeyword(statement,"had", 0); // finds "had"
+    String beginningOfStatement = statement.substring(0, psn-1); // Says what was said before "had"
+    String restOfStatement = statement.substring(psn+3);
+    return "Why did " + beginningOfStatement + restOfStatement + "?";
   }
   
   private int findKeyword(String statement, String goal, int startPos)
