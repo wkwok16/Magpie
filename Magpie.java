@@ -16,66 +16,25 @@ public class Magpie
     {
       response = "Why so negative?";
     }
-    else if (findKeyword(statement, "mother") >= 0 || findKeyword(statement, "father") >= 0 || findKeyword(statement, "sister") >= 0 || findKeyword(statement, "brother") >= 0)
-    {
-      response = "Tell me more about your family.";
-    }
-    else if(findKeyword(statement, "cat") >= 0 || findKeyword(statement, "dog") >= 0 || findKeyword(statement, "pet") >= 0 || findKeyword(statement, "fish") >= 0)
-    {
-      response = "Tell me more about your pets.";
-    }
-    else if(findKeyword(statement, "kiang") >= 0 || findKeyword(statement, "landgraf") >= 0)
-    {
-      response = "I've heard about that guy! He's a pretty smart and swell person!";
-    }
-    else if(statement.trim().length() < 1)
-    {
-      response = "Say somthing, please";
-    }
-    else if(findKeyword(statement, "hungry") >= 0 || findKeyword(statement, "food") >= 0)
-    {
-      response = "What foods do you enjoy?";
-    }
-    else if(findKeyword(statement, "school") >= 0 || findKeyword(statement, "grades") >= 0 || findKeyword(statement, "gpa") >= 0)
-    {
-      response = "Sounds difficult. It'll all be worth it in the end, though!";
-    }
-    else if(findKeyword(statement, "video games") >= 0 || findKeyword(statement, "games") >= 0 || findKeyword(statement, "controller") >= 0)
-    {
-      response = "I enjoy playing lots of video games! I enjoy playing Osu! in particular!";
-    }         
+    else if (findKeyword(statement, "mother") >= 0 || findKeyword(statement, "father") >= 0 || findKeyword(statement, "sister") >= 0 || findKeyword(statement, "brother") >= 0) response = "Tell me more about your family.";
+    else if(findKeyword(statement, "cat") >= 0 || findKeyword(statement, "dog") >= 0 || findKeyword(statement, "pet") >= 0 || findKeyword(statement, "fish") >= 0) response = "Tell me more about your pets.";
+    else if(findKeyword(statement, "kiang") >= 0 || findKeyword(statement, "landgraf") >= 0) response = "I've heard about that guy! He's a pretty smart and swell person!";
+    else if(statement.trim().length() < 1) response = "Say somthing, please";
+    else if(findKeyword(statement, "hungry") >= 0 || findKeyword(statement, "food") >= 0) response = "What foods do you enjoy?";
+    else if(findKeyword(statement, "school") >= 0 || findKeyword(statement, "grades") >= 0 || findKeyword(statement, "gpa") >= 0) response = "Sounds difficult. It'll all be worth it in the end, though!";
+    else if(findKeyword(statement, "video games") >= 0 || findKeyword(statement, "games") >= 0 || findKeyword(statement, "controller") >= 0) response = "I enjoy playing lots of video games! I enjoy playing Osu! in particular!";     
     // Transform statements
-    else if (findKeyword(statement, "I want", 0) >= 0)
-    {
-      response = transformIWantStatement(statement);
-    }
-    
-    else if(findKeyword(statement, "is", 0) >= 0) // Finds "is"
-    {
-      response = transformIsStatement(statement);
-    }
-     
-    else if(findKeyword(statement, "are", 0) >= 0 && findKeyword(statement, "you", 0) < 0) // Finds "are" and makes sure that "you" is not in the statement
-    {
-      response = transformAreStatement(statement);
-    }
-    
+    else if (findKeyword(statement, "I want", 0) >= 0) response = transformIWantStatement(statement);
+    else if(findKeyword(statement, "is", 0) >= 0)  response = transformIsStatement(statement); // Finds "is" 
+    else if(findKeyword(statement, "are", 0) >= 0 && findKeyword(statement, "you", 0) < 0) response = transformAreStatement(statement);  // Finds "are" and makes sure that "you" is not in the statement 
+    else if(findKeyword(statement, "was", 0) >= 0) response = transformWasStatement(statement); // Finds "was"
     else
     { // Look for a two word (you <something> me) pattern
       int psn = findKeyword(statement, "you", 0);
       int psnI = findKeyword (statement, "I", 0); // New integer for special one
-      if (psn >= 0 && findKeyword(statement, "me", psn) >= 0)
-      {
-        response = transformYouMeStatement(statement);
-      }
-      else if(psnI >= 0 && findKeyword(statement, "you", psn) >= 0) // Create special
-      {
-        response = transformIYouStatement(statement);
-      }
-      else
-      {
-        response = getRandomResponse();
-      }
+      if (psn >= 0 && findKeyword(statement, "me", psn) >= 0) response = transformYouMeStatement(statement);
+      else if(psnI >= 0 && findKeyword(statement, "you", psn) >= 0) response = transformIYouStatement(statement); // Create special
+      else response = getRandomResponse();
     }
     return response;
   }
@@ -152,6 +111,27 @@ public class Magpie
     return "Why are " + beginningOfStatement + restOfStatement + "?"; // Returns question
   }
   
+  private String transformWasStatement(String statement) // transform statement with "was" in it to question 
+  {
+    statement = statement.trim();
+    String lastChar = statement.substring(statement.length() - 1);
+    String person = "you";
+    if(lastChar.equals("."))
+    {
+      statement = statement.substring(0, statement.length() - 1);
+    }
+    int psn = findKeyword(statement, "was", 0); // finds "was"
+    String beginningOfStatement = statement.substring(0, psn-1); // Determines what was said before the "was"
+    String restOfStatement = statement.substring(psn+3); // determins rest of statement
+    if(findKeyword(statement,"I",0) >= 0) person = "were you"; // Finds out if it was "I was" or "he/she/it was"
+    else if(findKeyword(statement,"he",0) >=0) person = "was he";
+    else if(findKeyword(statement,"she",0) >= 0) person = "was she";
+    else if(findKeyword(statement,"it",0) >= 0) person = "was it";
+    else if(findKeyword(statement,"that",0) >= 0) person = "was that";
+    else person = "was " + beginningOfStatement; // In case the person gives other statement, it'll say that instead
+    return "Why " + person + restOfStatement + "?";
+  }
+  
   private int findKeyword(String statement, String goal, int startPos)
   {
     String phrase = statement.trim(); // The only change to incorporate the startPos is in the line below
@@ -181,7 +161,7 @@ public class Magpie
     return findKeyword(statement, goal, 0);
   }
   
-    //expands contractions
+  //expands contractions
   private String expandContraction(String statement)
   {
     String temp = statement;
@@ -252,7 +232,6 @@ public class Magpie
         temp = beginning + contraction + end; //pieces together the new contraction
       }
     }
-    
     String [] sPattern = { // the words that follow the pattern <something>'s = <something> is
       "he's",
       "she's",
@@ -265,7 +244,6 @@ public class Magpie
       "why's",
       "how's"
     };
-    
     //expands all the contractions with the <something>'s pattern
     for (int i = 0; i < sPattern.length; i++) {
       while (findKeyword(temp, sPattern[i]) >= 0) { //while there are still contractions
@@ -277,7 +255,6 @@ public class Magpie
         temp = beginning + contraction + end; //pieces together the new contraction
       }
     }
-    
     String [] willPattern = { // the words that follow the pattern <something>'ll = <something> will
       "I'll",
       "you'll",
@@ -294,7 +271,6 @@ public class Magpie
       "why'll",
       "how'll"
     };
-    
     //expands all the contractions with the <something>'ll pattern
     for (int i = 0; i < willPattern.length; i++) {
       while (findKeyword(temp, willPattern[i]) >= 0) { //while there are still contractions
@@ -306,7 +282,6 @@ public class Magpie
         temp = beginning + contraction + end; //pieces together the new contraction
       }
     }
-    
     String [] vePattern = { // the words that follow the pattern <something>'ve = <something> have
       "I've",
       "you've",
@@ -318,7 +293,6 @@ public class Magpie
       "might've",
       "must've"
     };
-    
     //expands all the contractions with the <something>'ve pattern
     for (int i = 0; i < vePattern.length; i++) {
       while (findKeyword(temp, vePattern[i]) >= 0) { //while there are still contractions
@@ -330,7 +304,6 @@ public class Magpie
         temp = beginning + contraction + end; //pieces together the new contraction
       }
     }
-    
     return temp;
   }
   

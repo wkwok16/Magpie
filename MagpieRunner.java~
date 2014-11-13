@@ -25,5 +25,4 @@ public class MagpieRunner
    statement = in.nextLine();
   }
  }
-
 }
