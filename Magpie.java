@@ -12,7 +12,10 @@ public class Magpie
     String statement = statementIn.toLowerCase(); // Makes string to lower case
     statement = expandContraction(statement); // Expands contractions
     //First response
-    if (findKeyword(statement, "no") >= 0) response = "Why so negative?";     
+    if (findKeyword(statement, "no") >= 0) response = "Why so negative?";
+    //Special responses for special things
+    else if(findKeyword(statement, "you are intelligent", 0) >= 0) response = "I know I am B)";
+    else if(findKeyword(statement, "you are dumb", 0) >= 0) response = "wow rude"; // I know it's not good grammar but it makes the robot seem more human
     // Transform statements
     else if(findKeyword(statement, "why is", 0) >= 0) response = transformWhyIsStatement(statement); // finds why is
     else if(findKeyword(statement, "why are", 0) >= 0) response = transformWhyAreStatement(statement); // finds why are
@@ -44,7 +47,7 @@ public class Magpie
   {
     if(findKeyword(statement,"you",0) >= 0)
     {
-      statement = statement.replace("you","tempvar12341234");
+      statement = statement.replace("you","tempvar12341234"); // uses temporary variable with numbers so the user wont input this. Of course if the user reads the code, they would test it.
     }
     if(findKeyword(statement,"me",0) >= 0)
     {
